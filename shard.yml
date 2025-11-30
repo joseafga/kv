@@ -1,0 +1,9 @@
+name: kv
+version: 0.1.0
+
+authors:
+  - José Almeida <jose.afga@gmail.com>
+
+crystal: '>= 1.18.2'
+
+license: MIT
