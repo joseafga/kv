@@ -11,8 +11,10 @@ module KV
     # Returns the namespaces owned by an account.
     #
     # *direction* to order namespaces.
+    # ("asc" or "desc")
     #
     # Field to *order* results by.
+    # ("id" or "title")
     #
     # *page* number of paginated results.
     # (minimum: 1, default: 1)
@@ -30,7 +32,7 @@ module KV
       url.query = query unless query.empty?
 
       response = request(url: url)
-      Response(Array(Namespace)).from_json(response).to_result
+      Response(Array(Namespace)).from_json(response).result
     end
 
     private def request(**params)
