@@ -35,6 +35,40 @@ module KV
       Response(Array(Namespace)).from_json(response).result
     end
 
+    # Get the namespace corresponding to the given ID.
+    def get(namespace_id : String) : Namespace
+      url = URI.parse("#{KV.config.endpoint}/namespaces/#{namespace_id}")
+
+      response = request(url: url)
+      Response(Namespace).from_json(response).result
+    end
+
+    # Creates a namespace under the given title.
+    # A `400` is returned if the account already owns a namespace with this title. A
+    # namespace must be explicitly deleted to be replaced.
+    def create(title : String) : Namespace
+      url = URI.parse("#{KV.config.endpoint}/namespaces")
+
+      response = request(method: "POST", url: url, body: { title: title }.to_json)
+      Response(Namespace).from_json(response).result
+    end
+
+    # Modifies a namespace's title.
+    def rename(namespace_id : String, title : String) : Namespace
+      url = URI.parse("#{KV.config.endpoint}/namespaces/#{namespace_id}")
+
+      response = request(method: "PUT", url: url, body: { title: title }.to_json)
+      Response(Namespace).from_json(response).result
+    end
+
+    # Deletes the namespace corresponding to the given ID.
+    def delete(namespace_id : String) : Nil
+      url = URI.parse("#{KV.config.endpoint}/namespaces/#{namespace_id}")
+
+      response = request(method: "DELETE", url: url)
+      Response(Nil).from_json(response).result
+    end
+
     private def request(**params)
       args = { # default params
         method: "GET",
