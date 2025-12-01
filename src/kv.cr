@@ -6,7 +6,7 @@ require "./kv/api"
 
 module KV
   VERSION = "0.1.0"
-  Log     = ::Log.for("d1")
+  Log     = ::Log.for("kv")
 
   class ResponseError < Exception
     getter info : Array(Response::ResponseInfo)
