@@ -149,5 +149,13 @@ module KV
 
       Response(Nil).from_json(response).result!
     end
+
+    # Deletes the namespace corresponding to the given ID.
+    def delete(key_name : String) : Nil
+      path = "/namespaces/#{id}/values/#{key_name}"
+
+      response = client.request(path, method: "DELETE")
+      Response(Nil).from_json(response).result!
+    end
   end
 end

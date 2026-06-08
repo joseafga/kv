@@ -51,7 +51,12 @@ describe KV do
     namespace.write("Expire in 60 seconds", "My precious", expiration_ttl: 60).should be_nil
   end
 
-  it "Delete a KV Namespace" do
+  it "Delete key-value pair" do
+    namespace = Store.get spec_namespace_id
+    namespace.delete("John").should be_nil
+  end
+
+  it "Remove a Namespace" do
     Store.delete(spec_namespace_id).should be_nil
   end
 end
