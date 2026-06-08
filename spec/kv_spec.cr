@@ -3,23 +3,23 @@ require "./spec_helper"
 describe KV do
   spec_namespace_id = ""
 
-  it "List KV Namespaces" do
+  it "List Namespaces" do
     list = Store.list
     list.should be_a(Array(KV::Namespace))
   end
 
-  it "Create a KV Namespace" do
+  it "Create a Namespace" do
     namespace = Store.create "some title"
     spec_namespace_id = namespace.id
     namespace.should be_a(KV::Namespace)
   end
 
-  it "Get a KV Namespace" do
+  it "Get a Namespace" do
     namespace = Store.get spec_namespace_id
     namespace.should be_a(KV::Namespace)
   end
 
-  it "Rename a KV Namespace" do
+  it "Rename a Namespace" do
     namespace = Store.rename spec_namespace_id, "renamed title"
     namespace.should be_a(KV::Namespace)
   end
@@ -34,11 +34,11 @@ describe KV do
     namespace.read("foo").should eq "bar"
   end
 
-  it "List a KV Namespace keys" do
+  it "List a Namespace keys" do
     namespace = Store.get spec_namespace_id
     list = namespace.keys
-    key = list.find! { |key| key.name == "foo" }
-    key.name.should eq "foo"
+    k = list.find! { |key| key.name == "foo" }
+    k.name.should eq "foo"
   end
 
   it "Write key value pair without metadata" do
