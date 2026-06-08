@@ -6,18 +6,16 @@ module KV
 
     getter errors = [] of ResponseInfo
     getter messages = [] of ResponseInfo
-    getter result : T?
+    property result : T?
     # Whether the API call was successful
     getter? success : Bool
     # *(Optional)*
     getter result_info : ResultInfo?
 
-    # Get result ir error handler
-    def result : T
-      result = @result
-
-      if success? && result.is_a?(T)
-        return result
+    # Get result or error handler
+    def result! : T
+      if success?
+        return @result.as(T)
       end
 
       raise ResponseError.new errors

@@ -1,5 +1,5 @@
 require "log"
-require "./kv/configuration"
+require "./kv/client"
 require "./kv/namespace"
 require "./kv/response"
 require "./kv/api"
