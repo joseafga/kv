@@ -111,6 +111,15 @@ module KV
       client.request(path)
     end
 
+    # Returns the metadata associated with the given key in the given namespace. Use
+    # URL-encoding to use special characters (for example, :, !, %) in the key name.
+    def metadata(key_name : String) : JSON::Any?
+      path = "/namespaces/#{id}/metadata/#{key_name}"
+
+      response = client.request(path)
+      Response(JSON::Any?).from_json(response).result!
+    end
+
     # Write a value identified by a key. Use URL-encoding to use special characters (for
     # example, :, !, %) in the key name. Body should be the value to be stored. If JSON
     # metadata to be associated with the key/value pair is needed, use
