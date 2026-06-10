@@ -30,12 +30,20 @@ module KV
       end
     end
 
+    def list(direction : String? = nil, order : String? = nil, page : Int32? = nil, per_page : Int32? = nil, &)
+      yield list(direction, order, page, per_page)
+    end
+
     # Get the namespace corresponding to the given ID.
     def get(namespace_id : String) : Namespace
       path = "/namespaces/#{namespace_id}"
 
       response = request(path)
       Response(Namespace).from_json(response).result!.with_client(self)
+    end
+
+    def get(namespace_id : String, &)
+      yield get(namespace_id)
     end
 
     # Creates a namespace under the given title.

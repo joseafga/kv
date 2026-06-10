@@ -63,4 +63,19 @@ describe KV do
   it "Remove a Namespace" do
     Store.delete(spec_namespace_id).should be_nil
   end
+
+  # Blocks
+  it "List Namespaces with Block" do
+    Store.list do |ns|
+      ns.should be_a(Array(KV::Namespace))
+    end
+  end
+
+  it "Get a Namespace with Block" do
+    Store.get spec_namespace_id do |ns|
+      ns.write("block", "list")
+      k = ns.keys
+      k.find! { |key| key.name == "block" }.name.should eq "block"
+    end
+  end
 end
