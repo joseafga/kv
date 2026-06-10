@@ -36,8 +36,7 @@ describe KV do
 
   it "List a Namespace keys" do
     namespace = Store.get spec_namespace_id
-    list = namespace.keys
-    k = list.find! { |key| key.name == "foo" }
+    k = namespace.keys.find! { |key| key.name == "foo" }
     k.name.should eq "foo"
   end
 
