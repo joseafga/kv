@@ -35,9 +35,10 @@ end
 
 ```crystal
 begin
-  client.get("bad-id")
+  namespace.read "bad-key"
 rescue ex : KV::ResponseError
   puts ex.message # => "Error 10009: get: 'key not found'."
+  namespace.write("bad-key", "default value")
 end
 ```
 

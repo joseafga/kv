@@ -76,8 +76,14 @@ describe KV do
   end
 
   # Errors
+  it "Namespace Not Found" do
+    expect_raises(KV::ResponseError, "Error 10011: could not parse UUID from request's namespace_id") do
+      Store.get "bad-uuid"
+    end
+  end
+
   it "Key Not Found" do
-    expect_raises(KV::ResponseError, "Error 10009: get: 'key not found'.") do
+    expect_raises(KV::ResponseError, "Error 10009: get: 'key not found'") do
       namespace = Store.get spec_namespace_id
       namespace.read("bad-key")
     end
