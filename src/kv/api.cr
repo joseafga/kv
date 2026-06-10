@@ -25,7 +25,7 @@ module KV
       path += "?#{query}" unless query.empty?
 
       response = request(path)
-      Response(Array(Namespace)).from_json(response).result!.tap do |arr|
+      Response(Array(Namespace)).from_json(response).result.tap do |arr|
         arr.each(&.with_client(self))
       end
     end
@@ -39,7 +39,7 @@ module KV
       path = "/namespaces/#{namespace_id}"
 
       response = request(path)
-      Response(Namespace).from_json(response).result!.with_client(self)
+      Response(Namespace).from_json(response).result.with_client(self)
     end
 
     def get(namespace_id : String, &)
@@ -53,7 +53,7 @@ module KV
       path = "/namespaces"
 
       response = request(path, method: "POST", body: {title: title}.to_json)
-      Response(Namespace).from_json(response).result!.with_client(self)
+      Response(Namespace).from_json(response).result.with_client(self)
     end
 
     # Modifies a namespace's title.
@@ -61,7 +61,7 @@ module KV
       path = "/namespaces/#{namespace_id}"
 
       response = request(path, method: "PUT", body: {title: title}.to_json)
-      Response(Namespace).from_json(response).result!.with_client(self)
+      Response(Namespace).from_json(response).result.with_client(self)
     end
 
     # Deletes the namespace corresponding to the given ID.
@@ -69,7 +69,7 @@ module KV
       path = "/namespaces/#{namespace_id}"
 
       response = request(path, method: "DELETE")
-      Response(Nil).from_json(response).result!
+      Response(Nil).from_json(response).result
     end
   end
 
@@ -106,7 +106,7 @@ module KV
       path += "?#{query}" unless query.empty?
 
       response = client.request(path)
-      Response(Array(Namespace::Key)).from_json(response).result!
+      Response(Array(Namespace::Key)).from_json(response).result
     end
 
     # Returns the value associated with the given key in the given namespace. Use
@@ -125,7 +125,7 @@ module KV
       path = "/namespaces/#{id}/metadata/#{key_name}"
 
       response = client.request(path)
-      Response(JSON::Any?).from_json(response).result!
+      Response(JSON::Any?).from_json(response).result
     end
 
     # Write a value identified by a key. Use URL-encoding to use special characters (for
@@ -164,7 +164,7 @@ module KV
         response = client.request(path, method: "PUT", headers: headers, body: value)
       end
 
-      Response(Nil).from_json(response).result!
+      Response(Nil).from_json(response).result
     end
 
     # Deletes the namespace corresponding to the given ID.
@@ -172,7 +172,7 @@ module KV
       path = "/namespaces/#{id}/values/#{key_name}"
 
       response = client.request(path, method: "DELETE")
-      Response(Nil).from_json(response).result!
+      Response(Nil).from_json(response).result
     end
   end
 end

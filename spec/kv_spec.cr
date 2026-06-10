@@ -60,10 +60,6 @@ describe KV do
     namespace.delete("John").should be_nil
   end
 
-  it "Remove a Namespace" do
-    Store.delete(spec_namespace_id).should be_nil
-  end
-
   # Blocks
   it "List Namespaces with Block" do
     Store.list do |ns|
@@ -77,5 +73,18 @@ describe KV do
       k = ns.keys
       k.find! { |key| key.name == "block" }.name.should eq "block"
     end
+  end
+
+  # Errors
+  it "Key Not Found" do
+    expect_raises(KV::ResponseError, "Error 10009: get: 'key not found'.") do
+      namespace = Store.get spec_namespace_id
+      namespace.read("bad-key")
+    end
+  end
+
+  # Remove test namespace at end
+  it "Remove a Namespace" do
+    Store.delete(spec_namespace_id).should be_nil
   end
 end

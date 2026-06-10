@@ -19,7 +19,7 @@ module KV
       end
     end
 
-    protected def request(path : String, **params)
+    protected def request(path : String, **params) : String
       args = { # default params
         method:  "GET",
         path:    @endpoint.path + path,
@@ -33,6 +33,8 @@ module KV
 
       case content_type.media_type
       when "application/json"
+        raise ResponseError.new(Response(Nil).from_json(response.body).errors) unless response.success?
+
         response.body
       when "application/octet-stream"
         response.body
