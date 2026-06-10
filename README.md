@@ -18,9 +18,30 @@
 
 ```crystal
 require "kv"
+
+# Credentials
+client = KV::Client.new("YOUR_CLOUDFLARE_ACCOUNT_ID", "YOUR_CLOUDFLARE_API_TOKEN")
+
+# Create a namespace
+namespace = client.create "My Namespace"
+
+client.get namespace.id do |ns|
+  ns.write("foo", "bar") # create a key-value
+  ns.keys.each { |key| puts key.name } # list all the keys
+end
 ```
 
-TODO: Write usage instructions here
+### Error handling
+
+```crystal
+begin
+  client.get("bad-id")
+rescue ex : KV::ResponseError
+  puts ex.message # => "Error 10009: get: 'key not found'."
+end
+```
+
+See `spec/kv_spec.cr` for more examples.
 
 ## Contributing
 
