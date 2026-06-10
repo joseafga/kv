@@ -26,7 +26,7 @@ describe KV do
 
   it "Write key value pair with metadata" do
     namespace = Store.get spec_namespace_id
-    namespace.write("foo", "bar", metadata: {"count" => [1,2,3]}.to_json).should be_nil
+    namespace.write("foo", "bar", metadata: {"count" => [1,2,3]}).should be_nil
   end
 
   it "Read key value pair" do
