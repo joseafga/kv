@@ -81,6 +81,14 @@ describe KV do
     response.successful_key_count.should eq 3
   end
 
+  it "Delete multiple key-value pairs" do
+    namespace = Store.get spec_namespace_id
+    keys = %w[one two three]
+
+    response = namespace.delete_bulk(keys)
+    response.successful_key_count.should eq 3
+  end
+
   # Blocks
   it "List Namespaces with Block" do
     Store.list do |ns|

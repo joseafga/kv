@@ -210,8 +210,13 @@ module KV
       Response(ResultBulk).from_json(response).result
     end
 
-    # TODO: Delete multiple key-value pairs
-    def delete_bulk
+    # Remove multiple KV pairs from the namespace. Body should be an array of up to 10,000
+    # keys to be removed.
+    def delete_bulk(keys : Array(String))
+      path = "/namespaces/#{id}/bulk/delete"
+
+      response = client.request(path, method: "POST", body: keys.to_json)
+      Response(ResultBulk).from_json(response).result
     end
   end
 end
