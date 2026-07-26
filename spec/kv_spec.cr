@@ -62,11 +62,9 @@ describe KV do
 
   it "Get multiple key-value pairs" do
     namespace = Store.get spec_namespace_id
-    arr = [
-      "foo",
-    ]
+    keys = %w[foo]
 
-    response = namespace.read_bulk(arr)
+    response = namespace.read_bulk(keys)
     response["values"]["foo"].should eq "bar"
   end
 
