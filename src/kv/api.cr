@@ -174,5 +174,27 @@ module KV
       response = client.request(path, method: "DELETE")
       Response(Nil).from_json(response).result
     end
+
+    # Retrieve up to 100 KV pairs from the namespace. Keys must contain text-based values.
+    # JSON values can optionally be parsed instead of being returned as a string value.
+    # Metadata can be included if `metadata` is `true`.
+    #
+    # *keys*: Array of keys to retrieve (maximum of 100).
+    #
+    # *type*: Whether to parse JSON values in the response.
+    # ("text" or "json")
+    #
+    # *metadata*: Whether to include metadata in the response.
+    def read_bulk(keys : Array(String), type : String = "json", metadata : Bool = false)
+      path = "/namespaces/#{id}/bulk/get"
+      body = {
+        keys:         keys,
+        type:         type,
+        withMetadata: metadata,
+      }
+
+      response = client.request(path, method: "POST", body: body.to_json)
+      Response(JSON::Any).from_json(response).result
+    end
   end
 end
