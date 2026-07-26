@@ -28,5 +28,39 @@ module KV
       # Arbitrary JSON that is associated with a key.
       getter metadata : JSON::Any?
     end
+
+    # Key, but to be written in a bulk operation.
+    struct BulkKey
+      include JSON::Serializable
+
+      # A key's *name*. The name may be at most 512 bytes. All printable, non-whitespace
+      # characters are valid. Use percent-encoding to define key names as part of a URL.
+      # (maxLength: 512)
+      getter key : String
+
+      # A UTF-8 encoded string to be stored, up to 25 MiB in length.
+      # (maxLength: 26214400)
+      getter value : String
+
+      # Indicates whether or not the server should base64 decode the value before storing
+      # it. Useful for writing values that wouldn’t otherwise be valid JSON strings, such
+      # as images.
+      getter base64 : Bool?
+
+      # Expires the key at a certain time, measured in number of seconds since the UNIX epoch.
+      @[JSON::Field(converter: Time::EpochConverter)]
+      getter expiration : Time?
+
+      # Expires the key after a number of seconds. Must be at least 60.
+      # (minimum: 60)
+      getter expiration_ttl : Int32?
+
+      # Arbitrary JSON that is associated with a key.
+      getter metadata : JSON::Any?
+
+      def initialize(@key : String, value, @base64 = nil, @expiration = nil, @expiration_ttl = nil, @metadata = nil)
+        @value = value.to_s
+      end
+    end
   end
 end

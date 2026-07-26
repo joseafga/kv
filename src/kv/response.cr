@@ -44,4 +44,13 @@ module KV
       getter total_count : Int32?
     end
   end
+
+  struct ResultBulk
+    include JSON::Serializable
+
+    # Number of keys successfully updated. *(Optional)*
+    getter successful_key_count : Int32?
+    # Name of the keys that failed to be fully updated. They should be retried. *(Optional)*
+    getter unsuccessful_keys : Array(String)
+  end
 end

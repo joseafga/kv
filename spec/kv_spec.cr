@@ -70,6 +70,17 @@ describe KV do
     response["values"]["foo"].should eq "bar"
   end
 
+  it "Write multiple key-value pairs" do
+    namespace = Store.get spec_namespace_id
+
+    bulk = ["one", "two", "three"].map_with_index do |num, index|
+      KV::Namespace::BulkKey.new(num, index + 1)
+    end
+
+    response = namespace.write_bulk(bulk)
+    response.successful_key_count.should eq 3
+  end
+
   # Blocks
   it "List Namespaces with Block" do
     Store.list do |ns|

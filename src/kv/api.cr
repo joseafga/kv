@@ -196,5 +196,22 @@ module KV
       response = client.request(path, method: "POST", body: body.to_json)
       Response(JSON::Any).from_json(response).result
     end
+
+    # Write multiple keys and values at once. Body should be an array of up to 10,000
+    # key-value pairs to be stored, along with optional expiration information. Existing
+    # values and expirations will be overwritten. If neither `expiration` nor
+    # `expiration_ttl` is specified, the key-value pair will never expire. If both are set,
+    # `expiration_ttl` is used and `expiration` is ignored. The entire request size must
+    # be 100 megabytes or less.
+    def write_bulk(bulks : Array(BulkKey))
+      path = "/namespaces/#{id}/bulk"
+
+      response = client.request(path, method: "PUT", body: bulks.to_json)
+      Response(ResultBulk).from_json(response).result
+    end
+
+    # TODO: Delete multiple key-value pairs
+    def delete_bulk
+    end
   end
 end
