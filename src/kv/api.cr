@@ -140,7 +140,7 @@ module KV
     # *expiration*: Expires the key at a certain time, measured in number of seconds since the UNIX epoch.
     #
     # *expiration_ttl*: Expires the key after a number of seconds. Must be at least 60.
-    def write(key_name : String, value : String, metadata = nil, expiration : Int64? = nil, expiration_ttl : Int64? = nil) : Nil
+    def write(key_name : String, value, metadata = nil, expiration : Int64? = nil, expiration_ttl : Int64? = nil) : Nil
       path = "/namespaces/#{id}/values/#{key_name}"
 
       query = URI::Params.build do |q|
@@ -153,7 +153,7 @@ module KV
         io = IO::Memory.new
         boundary = MIME::Multipart.generate_boundary
         builder = HTTP::FormData::Builder.new(io, boundary)
-        builder.field("value", value)
+        builder.field("value", value.to_s)
         builder.field("metadata", metadata.to_json)
         builder.finish
 
@@ -161,7 +161,7 @@ module KV
         response = client.request(path, method: "PUT", headers: headers, body: io.to_s)
       else
         headers = HTTP::Headers{"Content-Type" => "application/octet-stream"}
-        response = client.request(path, method: "PUT", headers: headers, body: value)
+        response = client.request(path, method: "PUT", headers: headers, body: value.to_s)
       end
 
       Response(Nil).from_json(response).result
