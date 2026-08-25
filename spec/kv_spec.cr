@@ -62,28 +62,33 @@ describe KV do
 
   it "Get multiple key-value pairs" do
     namespace = Store.get spec_namespace_id
-    keys = %w[foo]
 
-    response = namespace.read_bulk(keys)
-    response["values"]["foo"].should eq "bar"
+    response = namespace.read_bulk("foo", "Expire in 60 seconds", type: "text")
+    response.values["foo"].should eq %({"count":[1,2,3]})
+  end
+
+  it "Get multiple key-value pairs with metadata" do
+    namespace = Store.get spec_namespace_id
+
+    response = namespace.read_bulk("foo", "whatever", type: "text", with_metadata: true)
+    response.values["foo"].try &.value.should eq %({"count":[1,2,3]})
   end
 
   it "Write multiple key-value pairs" do
     namespace = Store.get spec_namespace_id
 
-    bulk = ["one", "two", "three"].map_with_index do |num, index|
+    bulk = {"one", "two", "three"}.map_with_index do |num, index|
       KV::Namespace::BulkKey.new(num, index + 1)
     end
 
-    response = namespace.write_bulk(bulk)
+    response = namespace.write_bulk(*bulk)
     response.successful_key_count.should eq 3
   end
 
   it "Delete multiple key-value pairs" do
     namespace = Store.get spec_namespace_id
-    keys = %w[one two three]
 
-    response = namespace.delete_bulk(keys)
+    response = namespace.delete_bulk("one", "two", "three")
     response.successful_key_count.should eq 3
   end
 

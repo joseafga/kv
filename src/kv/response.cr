@@ -53,4 +53,21 @@ module KV
     # Name of the keys that failed to be fully updated. They should be retried. *(Optional)*
     getter unsuccessful_keys : Array(String)
   end
+
+  struct ResultGetBulk(T)
+    include JSON::Serializable
+
+    getter values : Hash(String, T?)
+
+    struct WithMetadata
+      include JSON::Serializable
+
+      getter value : String | JSON::Any
+
+      @[JSON::Field(converter: Time::EpochConverter)]
+      getter expiration : Time?
+
+      getter metadata : JSON::Any?
+    end
+  end
 end

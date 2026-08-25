@@ -5,7 +5,7 @@ require "./kv/response"
 require "./kv/api"
 
 module KV
-  VERSION = "0.3.0"
+  VERSION = "0.4.0"
   Log     = ::Log.for("kv")
 
   class ResponseError < Exception

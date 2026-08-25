@@ -177,7 +177,20 @@ module KV
 
     # Retrieve up to 100 KV pairs from the namespace. Keys must contain text-based values.
     # JSON values can optionally be parsed instead of being returned as a string value.
-    # Metadata can be included if `metadata` is `true`.
+    #
+    # *keys*: Array of keys to retrieve (maximum of 100).
+    #
+    # *type*: Whether to parse JSON values in the response.
+    # ("text" or "json")
+    def read_bulk(*keys, type : String = "json")
+      path = "/namespaces/#{id}/bulk/get"
+      body = {keys: keys, type: type}
+
+      response = client.request(path, method: "POST", body: body.to_json)
+      Response(ResultGetBulk(String | JSON::Any)).from_json(response).result
+    end
+
+    # Metadata can be included if `with_metadata` is `true` (expiration will be included too).
     #
     # *keys*: Array of keys to retrieve (maximum of 100).
     #
@@ -185,16 +198,16 @@ module KV
     # ("text" or "json")
     #
     # *metadata*: Whether to include metadata in the response.
-    def read_bulk(keys : Array(String), type : String = "json", metadata : Bool = false)
+    def read_bulk(*keys, type : String = "json", with_metadata : Bool)
       path = "/namespaces/#{id}/bulk/get"
       body = {
         keys:         keys,
         type:         type,
-        withMetadata: metadata,
+        withMetadata: with_metadata,
       }
 
       response = client.request(path, method: "POST", body: body.to_json)
-      Response(JSON::Any).from_json(response).result
+      Response(ResultGetBulk(ResultGetBulk::WithMetadata)).from_json(response).result
     end
 
     # Write multiple keys and values at once. Body should be an array of up to 10,000
@@ -203,7 +216,7 @@ module KV
     # `expiration_ttl` is specified, the key-value pair will never expire. If both are set,
     # `expiration_ttl` is used and `expiration` is ignored. The entire request size must
     # be 100 megabytes or less.
-    def write_bulk(bulks : Array(BulkKey))
+    def write_bulk(*bulks) : ResultBulk
       path = "/namespaces/#{id}/bulk"
 
       response = client.request(path, method: "PUT", body: bulks.to_json)
@@ -211,8 +224,8 @@ module KV
     end
 
     # Remove multiple KV pairs from the namespace. Body should be an array of up to 10,000
-    # keys to be removed.
-    def delete_bulk(keys : Array(String))
+    # `keys` to be removed.
+    def delete_bulk(*keys) : ResultBulk
       path = "/namespaces/#{id}/bulk/delete"
 
       response = client.request(path, method: "POST", body: keys.to_json)
