@@ -28,9 +28,11 @@ module KV
       # Arbitrary JSON that is associated with a key.
       getter metadata : JSON::Any?
     end
+  end
 
+  module Bulk
     # Key, but to be written in a bulk operation.
-    struct BulkKey
+    struct Key
       include JSON::Serializable
 
       # A key's *name*. The name may be at most 512 bytes. All printable, non-whitespace

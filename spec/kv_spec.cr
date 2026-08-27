@@ -78,7 +78,7 @@ describe KV do
     namespace = Store.get spec_namespace_id
 
     bulk = {"one", "two", "three"}.map_with_index do |num, index|
-      KV::Namespace::BulkKey.new(num, index + 1)
+      KV::Bulk::Key.new(num, index + 1)
     end
 
     response = namespace.write_bulk(*bulk)
