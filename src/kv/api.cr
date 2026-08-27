@@ -182,12 +182,18 @@ module KV
     #
     # *type*: Whether to parse JSON values in the response.
     # ("text" or "json")
-    def read_bulk(*keys, type : String = "json")
+    def read_bulk(keys : Enumerable, type : T.class = String) forall T
       path = "/namespaces/#{id}/bulk/get"
-      body = {keys: keys, type: type}
+      format = T == String ? "text" : "json"
+
+      body = {keys: keys, type: format}
 
       response = client.request(path, method: "POST", body: body.to_json)
-      Response(ResultGetBulk(String | JSON::Any)).from_json(response).result
+      Response(Bulk::ResultGet(T)).from_json(response).result
+    end
+
+    def read_bulk(*keys, type : T.class = String) forall T
+      read_bulk(keys, type: type)
     end
 
     # Metadata can be included if `with_metadata` is `true` (expiration will be included too).
@@ -198,16 +204,22 @@ module KV
     # ("text" or "json")
     #
     # *metadata*: Whether to include metadata in the response.
-    def read_bulk(*keys, type : String = "json", with_metadata : Bool)
+    def read_bulk(keys : Enumerable, *, type : T.class = String, with_metadata : Bool) forall T
       path = "/namespaces/#{id}/bulk/get"
+      format = T == String ? "text" : "json"
+
       body = {
         keys:         keys,
-        type:         type,
+        type:         format,
         withMetadata: with_metadata,
       }
 
       response = client.request(path, method: "POST", body: body.to_json)
-      Response(ResultGetBulk(ResultGetBulk::WithMetadata)).from_json(response).result
+      Response(Bulk::ResultGetWithMetadata(T)).from_json(response).result
+    end
+
+    def read_bulk(*keys, type : T.class = String, with_metadata : Bool) forall T
+      read_bulk(keys, type: type, with_metadata: with_metadata)
     end
 
     # Write multiple keys and values at once. Body should be an array of up to 10,000
@@ -216,20 +228,28 @@ module KV
     # `expiration_ttl` is specified, the key-value pair will never expire. If both are set,
     # `expiration_ttl` is used and `expiration` is ignored. The entire request size must
     # be 100 megabytes or less.
-    def write_bulk(*bulks) : ResultBulk
+    def write_bulk(bulks : Enumerable) : Bulk::Result
       path = "/namespaces/#{id}/bulk"
 
       response = client.request(path, method: "PUT", body: bulks.to_json)
-      Response(ResultBulk).from_json(response).result
+      Response(Bulk::Result).from_json(response).result
+    end
+
+    def write_bulk(*bulks) : Bulk::Result
+      write_bulk(bulks)
     end
 
     # Remove multiple KV pairs from the namespace. Body should be an array of up to 10,000
     # `keys` to be removed.
-    def delete_bulk(*keys) : ResultBulk
+    def delete_bulk(keys : Enumerable) : Bulk::Result
       path = "/namespaces/#{id}/bulk/delete"
 
       response = client.request(path, method: "POST", body: keys.to_json)
-      Response(ResultBulk).from_json(response).result
+      Response(Bulk::Result).from_json(response).result
+    end
+
+    def delete_bulk(*keys) : Bulk::Result
+      delete_bulk(keys)
     end
   end
 end

@@ -45,29 +45,48 @@ module KV
     end
   end
 
-  struct ResultBulk
-    include JSON::Serializable
-
-    # Number of keys successfully updated. *(Optional)*
-    getter successful_key_count : Int32?
-    # Name of the keys that failed to be fully updated. They should be retried. *(Optional)*
-    getter unsuccessful_keys : Array(String)
-  end
-
-  struct ResultGetBulk(T)
-    include JSON::Serializable
-
-    getter values : Hash(String, T?)
-
-    struct WithMetadata
+  module Bulk
+    struct Result
       include JSON::Serializable
 
-      getter value : String | JSON::Any
+      # Number of keys successfully updated. *(Optional)*
+      getter successful_key_count : Int32?
+      # Name of the keys that failed to be fully updated. They should be retried. *(Optional)*
+      getter unsuccessful_keys : Array(String)
+    end
 
-      @[JSON::Field(converter: Time::EpochConverter)]
-      getter expiration : Time?
+    struct ResultGet(T)
+      include JSON::Serializable
 
-      getter metadata : JSON::Any?
+      # optional map[string or number or boolean or map[unknown]]
+      # Requested keys are paired with their values in an object.
+      getter values : Hash(String, T?)
+    end
+
+    struct ResultGetWithMetadata(T)
+      include JSON::Serializable
+
+      # optional map[string or number or boolean or map[unknown]]
+      # Requested keys are paired with their values in an object.
+      getter values : Hash(String, Metadata(T)?)
+
+      struct Metadata(T)
+        include JSON::Serializable
+
+        # The value associated with the key.
+        getter value : T
+
+        # Expires the key at a certain time, measured in number of seconds since the UNIX epoch.
+        @[JSON::Field(converter: Time::EpochConverter)]
+        getter expiration : Time?
+
+        # The metadata associated with the key.
+        getter metadata : JSON::Any?
+
+        def to_s(io : IO)
+          io << value.to_s
+        end
+      end
     end
   end
 end

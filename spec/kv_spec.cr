@@ -63,14 +63,14 @@ describe KV do
   it "Get multiple key-value pairs" do
     namespace = Store.get spec_namespace_id
 
-    response = namespace.read_bulk("foo", "Expire in 60 seconds", type: "text")
+    response = namespace.read_bulk("foo", "Expire in 60 seconds", type: String)
     response.values["foo"].should eq %({"count":[1,2,3]})
   end
 
   it "Get multiple key-value pairs with metadata" do
     namespace = Store.get spec_namespace_id
 
-    response = namespace.read_bulk("foo", "whatever", type: "text", with_metadata: true)
+    response = namespace.read_bulk("foo", "whatever", type: String, with_metadata: true)
     response.values["foo"].try &.value.should eq %({"count":[1,2,3]})
   end
 
